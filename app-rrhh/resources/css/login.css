@@ -1,0 +1,32 @@
+/* Agregué daisyUI en un CSS cargado exclusivamente por el login; el reset sigue viniendo de tailwind.css. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Elegí una tipografía de interfaz más sobria y disponible localmente para el formulario de acceso. */
+body {
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Diferencié los campos del modo claro con gris y texto oscuro para facilitar la lectura. */
+html[data-theme="rrhh"] #email,
+html[data-theme="rrhh"] #password {
+  background-color: #e2e8f0;
+  color: #0f172a;
+  caret-color: #0f172a;
+}
+
+/* Atenué los placeholders respecto del texto ingresado, conservando contraste sobre el gris. */
+html[data-theme="rrhh"] #email::placeholder,
+html[data-theme="rrhh"] #password::placeholder {
+  color: #475569;
+  opacity: 1;
+}
+
+/* Evité que el autocompletado de Chromium/Opera sustituya el fondo elegido por un tono claro. */
+html[data-theme="rrhh"] #email:-webkit-autofill,
+html[data-theme="rrhh"] #password:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px #e2e8f0 inset;
+  -webkit-text-fill-color: #0f172a;
+  caret-color: #0f172a;
+}

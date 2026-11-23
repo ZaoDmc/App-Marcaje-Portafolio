@@ -1,0 +1,25 @@
+# Agregué protección para local, que todavía publica la raíz del repositorio.
+# En Hostinger el directorio público utiliza public/.htaccess.
+Options -Indexes -MultiViews
+
+<FilesMatch "(?i)(^\.|\.(env|ini|log|sql|bak|conf|md|json|lock|ya?ml|toml|zip)$)">
+    Require all denied
+</FilesMatch>
+
+RewriteEngine On
+RewriteRule (^|/)\. - [F,L]
+# Agregué fuentes y herramientas de frontend a las carpetas privadas.
+RewriteRule ^(?:src|config|includes|vendor|node_modules|resources|scripts|database|docs|tests|scratch|acon_db_semilla|uploads(?:\.[^/]*)?)(?:/|$) - [F,L,NC]
+RewriteRule ^diagnostico_correo\.php(?:/|$) - [F,L,NC]
+
+# Conservé /assets sirviendo public/assets como fuente única. Solo formatos
+# públicos y archivos existentes pueden saltarse el catálogo de rutas.
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^public/assets/.+\.(?:css|js|png|jpe?g|gif|svg|webp|ico|woff2?|ttf|eot|map)$ - [L,NC]
+RewriteRule ^assets/(.+\.(?:css|js|png|jpe?g|gif|svg|webp|ico|woff2?|ttf|eot|map))$ public/assets/$1 [L,NC]
+
+# Conservé las URLs antiguas aunque se retiren sus archivos puente; todas se
+# resuelven por catálogo, conservando cuerpo POST y parámetros sin redirección.
+# Evité bucles al reenviar directamente al único front controller.
+RewriteRule ^public/index\.php$ - [L]
+RewriteRule ^ public/index.php [L,QSA]

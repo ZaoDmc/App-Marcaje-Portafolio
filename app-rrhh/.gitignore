@@ -1,0 +1,19 @@
+
+.env
+# Agregué protección de variantes privadas del entorno; la plantilla sí se versiona.
+.env.*
+!.env.example
+# Composer reconstruye vendor desde composer.lock; no versionar archivos sueltos de dependencias.
+/vendor/
+# Agregué exclusiones de archivos persistentes de usuarios y caché de pruebas.
+/uploads/
+/uploads.*/
+/.phpunit.cache/
+/.phpunit.result.cache
+*.zip
+scratch/
+# Agregué dependencias de compilación local; el CSS generado sí se versiona.
+/node_modules/
+# Cosas que no se deben subir
+.vscode/
+.playwright-mcp/

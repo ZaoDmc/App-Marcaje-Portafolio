@@ -1,0 +1,19 @@
+{
+  "name": "epracticas-rrhh-assets",
+  "private": true,
+  "scripts": {
+    "build": "npm run build:css && node scripts/copy-icons.cjs",
+    "build:css": "npm run build:css:portal && npm run build:css:login",
+    "build:css:portal": "tailwindcss -c tailwind.config.cjs -i resources/css/tailwind.css -o public/assets/css/tailwind.css --minify",
+    "build:css:login": "tailwindcss -c tailwind.login.config.cjs -i resources/css/login.css -o public/assets/css/login.css --minify",
+    "test:ui": "node --test tests/ui.test.cjs",
+    "test:e2e": "node --test tests/e2e.test.cjs"
+  },
+  "devDependencies": {
+    "bootstrap-icons": "1.11.3",
+    "daisyui": "4.12.24",
+    "lucide-static": "1.59.0",
+    "playwright": "1.62.1",
+    "tailwindcss": "3.4.17"
+  }
+}

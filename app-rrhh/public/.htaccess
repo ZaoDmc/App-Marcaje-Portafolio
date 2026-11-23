@@ -1,0 +1,19 @@
+# Cambié el orden: primero proteger sensibles, incluso si el archivo existe.
+Options -Indexes -MultiViews
+
+<FilesMatch "(?i)(^\.|\.(env|ini|log|sql|bak|conf|md|json|lock|ya?ml|toml|zip)$)">
+    Require all denied
+</FilesMatch>
+
+RewriteEngine On
+RewriteRule (^|/)\. - [F,L]
+# Agregué fuentes y herramientas de frontend a las carpetas privadas.
+RewriteRule ^(?:src|config|includes|vendor|node_modules|resources|scripts|database|docs|tests|scratch|acon_db_semilla|uploads(?:\.[^/]*)?)(?:/|$) - [F,L,NC]
+RewriteRule ^(?:diagnostico_correo|backend)\.php(?:/|$) - [F,L,NC]
+
+# Agregué formatos públicos bajo assets, en vez de permitir cualquier archivo
+# o directorio existente. Todo lo demás se resuelve con el catálogo privado.
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^assets/.+\.(?:css|js|png|jpe?g|gif|svg|webp|ico|woff2?|ttf|eot|map)$ - [L,NC]
+RewriteRule ^index\.php$ - [L]
+RewriteRule ^ index.php [L,QSA]

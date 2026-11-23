@@ -1,0 +1,47 @@
+/* Agregué la fuente de Tailwind. El resultado compilado se publica en assets/css. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Conservé la tipografía y los colores del portal, con foco visible y controles legibles. */
+  body { @apply bg-brand-bg text-brand-ink font-sans; }
+  button, input, select, textarea { font: inherit; }
+  button:disabled, input:disabled, select:disabled { @apply cursor-not-allowed opacity-60; }
+  :focus-visible { @apply outline outline-2 outline-offset-2 outline-brand-blue; }
+  hr { @apply my-4 border-slate-200; }
+}
+
+@layer components {
+  /* Agregué componentes propios con utilidades Tailwind, compartidos por las pantallas de gestión. */
+  .rrhh-button { @apply inline-flex items-center justify-center gap-2 rounded-lg border border-transparent px-4 py-2 text-sm font-semibold leading-5 transition focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2; }
+  .rrhh-input { @apply block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-brand-blue focus:ring-2 focus:ring-blue-500/20; }
+  .rrhh-select { @apply rrhh-input pr-8; }
+  .rrhh-label { @apply mb-1 block text-sm font-semibold text-slate-700; }
+  .rrhh-help { @apply mt-1 text-xs text-slate-500; }
+  .rrhh-checkbox { @apply h-4 w-4 shrink-0 rounded border-slate-300 accent-brand-blue; }
+  .rrhh-badge { @apply inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold leading-tight; }
+  .rrhh-alert { @apply relative mb-4 rounded-lg border px-4 py-3 text-sm; }
+  .rrhh-alert ul { @apply list-disc pl-5; }
+  .rrhh-card { @apply rounded-xl border border-slate-200 bg-white shadow-sm; }
+  .rrhh-table { @apply w-full border-collapse text-left text-sm text-slate-700; }
+  .rrhh-table th { @apply border-b border-slate-200 bg-slate-50 px-3 py-3 text-xs font-semibold text-slate-600; }
+  .rrhh-table td { @apply border-b border-slate-100 px-3 py-3; }
+  .rrhh-table-compact th, .rrhh-table-compact td { @apply px-2 py-2; }
+  .rrhh-table-hover tbody tr:hover { @apply bg-slate-50; }
+  .rrhh-tabs { @apply mb-3 flex flex-wrap gap-2 border-b border-slate-200 pb-2; }
+  .rrhh-tab { @apply block rounded-lg px-3 py-2 text-sm text-slate-600 hover:bg-blue-50 hover:text-blue-700; }
+  .rrhh-tab.active { @apply bg-blue-50 font-semibold text-blue-700; }
+  .rrhh-input-group { @apply flex items-stretch gap-1; }
+  .rrhh-input-group .rrhh-input { @apply min-w-0; }
+  .rrhh-close { @apply inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-xl leading-none opacity-75 hover:bg-slate-500/10 hover:opacity-100; }
+  .rrhh-close::before { content: '\00d7'; }
+  .rrhh-progress { @apply flex h-2 overflow-hidden rounded-full bg-slate-200; }
+  .rrhh-progress-bar { @apply flex items-center justify-center bg-brand-blue text-xs text-white transition-[width]; }
+}
+
+/* Agregué comportamiento visual accesible sin clases/JS de Bootstrap. */
+[hidden] { display: none !important; }
+dialog[data-ui-dialog] { width: min(36rem, calc(100vw - 2rem)); max-height: calc(100dvh - 2rem); overflow-y: auto; padding: 0; border: 0; border-radius: 0.75rem; }
+dialog[data-ui-dialog]::backdrop { background: rgb(15 23 42 / 0.55); }
+body.rrhh-dialog-open { overflow: hidden; }

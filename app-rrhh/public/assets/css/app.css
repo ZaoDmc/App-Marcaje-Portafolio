@@ -1,0 +1,1313 @@
+/* Migré selectores a componentes propios de Tailwind; se conserva la identidad existente. */
+/* ==========================================================================
+   app.css — Estilos compartidos del portal RRHH
+   Diseño base, tokens de diseño y componentes reutilizables.
+   ========================================================================== */
+
+/* ---------- Tokens de diseño ---------- */
+:root {
+    --app-bg: #f3f6fa;
+    --app-panel: #ffffff;
+    --app-sidebar: #0b2a5b;
+    --app-sidebar-deep: #06204a;
+    --app-active: #145deb;
+    --app-blue: #2563eb;
+    --app-blue-soft: #eaf1ff;
+    --app-cyan: #06b6d4;
+    --app-violet: #7c3aed;
+    --app-green: #16a34a;
+    --app-yellow: #f59e0b;
+    --app-red: #e30613;
+    --app-ink: #0f172a;
+    --app-muted: #64748b;
+    --app-line: #e0e7f0;
+    --app-shadow: 0 16px 32px rgba(15, 23, 42, 0.08);
+    --app-shadow-soft: 0 8px 18px rgba(15, 23, 42, 0.06);
+}
+
+/* ---------- Reset base ---------- */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+    background: var(--app-bg);
+    color: var(--app-ink);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* El menú lateral usa Tailwind y ui.js desde fase 6. */
+
+/* Agregué límites de tamaño y corte de palabras para que datos largos no ensanchen el portal del practicante. */
+.rrhh-practicante { overflow-wrap: anywhere; }
+.rrhh-practicante [data-ui-main],
+.rrhh-practicante .grid > *,
+.rrhh-practicante .flex > * { min-width: 0; }
+.rrhh-practicante input,
+.rrhh-practicante select,
+.rrhh-practicante textarea { min-width: 0; max-width: 100%; }
+.rrhh-practicante .rrhh-account-email { max-width: 10rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Ajusté tablas al espacio real del contenido, conservando el texto completo de cada campo. */
+.rrhh-practicante .rrhh-responsive-table { width: 100%; table-layout: fixed; }
+.rrhh-practicante .rrhh-responsive-table td,
+.rrhh-practicante .rrhh-responsive-table th { white-space: normal; overflow-wrap: anywhere; }
+.rrhh-practicante .rrhh-responsive-table td { max-width: none; overflow: visible; }
+.rrhh-practicante .rrhh-cell-value { min-width: 0; white-space: normal; overflow-wrap: anywhere; }
+
+/* Apilé los registros cuando la tabla pierde espacio por el menú o el ancho de pantalla.
+ * Conservé encabezados accesibles y roles de tabla; no oculté datos ni deshabilité el zoom. */
+@media (max-width: 1279.98px) {
+    .rrhh-practicante .rrhh-responsive-table,
+    .rrhh-practicante .rrhh-responsive-table tbody,
+    .rrhh-practicante .rrhh-responsive-table tr { display: block; width: 100%; }
+    .rrhh-practicante .rrhh-responsive-table thead { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+    .rrhh-practicante .rrhh-responsive-table td { display: grid; grid-template-columns: minmax(0, 7rem) minmax(0, 1fr); align-items: start; gap: 0.75rem; width: 100%; padding: 0.625rem 0.875rem; }
+    .rrhh-practicante .rrhh-responsive-table td::before { content: attr(data-label); font-size: 0.75rem; font-weight: 600; color: var(--app-muted); }
+    .rrhh-practicante .rrhh-responsive-table tr { padding: 0.5rem 0; border-bottom: 1px solid var(--app-line); }
+    .rrhh-practicante .rrhh-responsive-table tr:last-child { border-bottom: 0; }
+}
+
+/* Dejé etiquetas encima del valor en teléfonos estrechos para no comprimir horarios y estados. */
+@media (max-width: 359.98px) {
+    .rrhh-practicante .rrhh-responsive-table td { grid-template-columns: minmax(0, 1fr); gap: 0.25rem; }
+}
+
+/* Evité la ampliación automática por controles pequeños en navegadores móviles, conservando el zoom manual. */
+@media (max-width: 639.98px) {
+    .rrhh-practicante input,
+    .rrhh-practicante select,
+    .rrhh-practicante textarea { font-size: 1rem !important; }
+}
+
+/* ---------- Mobile topbar ---------- */
+/* Corregí la gestión de practicantes de ADMIN/SUPERVISOR, incluidos ficha y formularios seleccionados. */
+.gestion-practicantes-content { min-width: 0; overflow-wrap: anywhere; }
+.gestion-practicantes-content .grid > *,
+.gestion-practicantes-content .flex > * { min-width: 0; }
+.gestion-practicantes-content input,
+.gestion-practicantes-content select,
+.gestion-practicantes-content textarea { min-width: 0; max-width: 100%; }
+/* Conservé el botón Buscar legible mientras el campo se adapta al espacio disponible. */
+.gestion-practicantes-content .gestion-practicantes-search { max-width: 100%; }
+.gestion-practicantes-content .gestion-practicantes-search button { flex-shrink: 0; overflow-wrap: normal; }
+.gestion-practicantes-content .rrhh-input-group { flex-wrap: wrap; }
+.gestion-practicantes-content .rrhh-input-group input { flex: 1 1 10rem; }
+.gestion-practicantes-content .rrhh-responsive-table { width: 100%; table-layout: fixed; }
+.gestion-practicantes-content .rrhh-responsive-table th,
+.gestion-practicantes-content .rrhh-responsive-table td { white-space: normal; overflow-wrap: anywhere; }
+.gestion-practicantes-content .rrhh-cell-value { min-width: 0; }
+
+/* Recuperé las filas compactas en escritorio: el ancho se reparte sin apilar cada campo del horario. */
+.gestion-practicantes-content .rrhh-table-scroll { overflow-x: visible; }
+.gestion-practicantes-content .rrhh-responsive-table th,
+.gestion-practicantes-content .rrhh-responsive-table td { padding: 0.5rem 0.375rem; }
+.gestion-practicantes-content .rrhh-horario-table th:first-child { width: 16%; }
+.gestion-practicantes-content .rrhh-horario-table th:nth-child(2) { width: 12%; }
+.gestion-practicantes-content .rrhh-horario-table input[data-hora24] { padding: 0.375rem 0.25rem !important; }
+.gestion-practicantes-content .rrhh-input-group button { padding: 0.375rem 0.5rem; font-size: 0.75rem; max-width: 100%; }
+.gestion-practicantes-content .rrhh-managed-list th:first-child { width: 29%; }
+.gestion-practicantes-content .rrhh-managed-list th:nth-child(2) { width: 23%; }
+.gestion-practicantes-content .rrhh-managed-list th:nth-child(3) { width: 14%; }
+.gestion-practicantes-content .rrhh-managed-list th:nth-child(4) { width: 18%; }
+.gestion-practicantes-content .rrhh-managed-list th:nth-child(5) { width: 16%; }
+
+/* Solo apilé las tablas en móviles; una ficha estrecha de escritorio conserva su formato tabular. */
+@media (max-width: 767.98px) {
+    .gestion-practicantes-content .rrhh-responsive-table,
+    .gestion-practicantes-content .rrhh-responsive-table tbody,
+    .gestion-practicantes-content .rrhh-responsive-table tr { display: block; width: 100%; }
+    .gestion-practicantes-content .rrhh-responsive-table thead { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); }
+    .gestion-practicantes-content .rrhh-responsive-table td { display: grid; grid-template-columns: minmax(0, 7rem) minmax(0, 1fr); gap: 0.75rem; align-items: start; width: 100%; padding: 0.625rem; text-align: left; }
+    .gestion-practicantes-content .rrhh-responsive-table td::before { content: attr(data-label); font-size: 0.75rem; font-weight: 600; color: var(--app-muted); }
+    .gestion-practicantes-content .rrhh-responsive-table tr { border-bottom: 1px solid var(--app-line); }
+    .gestion-practicantes-content .rrhh-responsive-table td.rrhh-table-empty { display: block; }
+    .gestion-practicantes-content .rrhh-responsive-table td.rrhh-table-empty::before { content: none; }
+    /* Mostré el horario en dos campos por fila móvil para reducir su altura y conservar controles legibles. */
+    .gestion-practicantes-content .rrhh-horario-table tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .gestion-practicantes-content .rrhh-horario-table td { grid-template-columns: minmax(0, 1fr); gap: 0.25rem; }
+    .gestion-practicantes-content .rrhh-horario-table input[data-hora24] { font-size: 1rem !important; }
+}
+@media (max-width: 359.98px) {
+    .gestion-practicantes-content .rrhh-responsive-table td { grid-template-columns: minmax(0, 1fr); gap: 0.25rem; }
+}
+
+.mobile-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--app-sidebar);
+    color: #ffffff;
+    position: sticky;
+    top: 0;
+    z-index: 1050;
+}
+
+.mobile-menu-btn {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    background: transparent;
+    color: #ffffff;
+    font-size: 1.4rem;
+    cursor: pointer;
+}
+
+.mobile-menu-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+@media (min-width: 992px) {
+    .mobile-topbar {
+        display: none !important;
+    }
+}
+
+/* ---------- Header principal ---------- */
+.main-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+
+.main-header .profile-trigger::after {
+    font-size: .65rem;
+    vertical-align: middle;
+}
+
+/* ---------- Componentes compartidos ---------- */
+.panel-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.panel-heading span {
+    display: block;
+    color: var(--app-muted);
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.panel-heading h2 {
+    margin: 2px 0 0;
+    color: #101d46;
+    font-size: 0.86rem;
+    font-weight: 800;
+}
+
+.panel-heading small {
+    display: block;
+    margin-top: 3px;
+    color: var(--app-muted);
+    font-size: 0.66rem;
+    font-weight: 700;
+}
+
+.panel-heading a {
+    color: var(--app-blue);
+    font-size: 0.74rem;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.panel-heading strong {
+    color: var(--app-muted);
+    font-size: 0.74rem;
+    white-space: nowrap;
+}
+
+/* ---------- Tarjetas de estado ---------- */
+.status-pill,
+.state-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border-radius: 999px;
+    font-weight: 800;
+}
+
+.status-pill {
+    min-height: 18px;
+    padding: 3px 7px;
+    font-size: 0.62rem;
+}
+
+.state-chip {
+    min-height: 30px;
+    padding: 5px 10px;
+    font-size: 0.78rem;
+}
+
+.mini-state {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 22px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 800;
+}
+
+.status-ok,
+.state-ok {
+    background: rgba(22, 163, 74, 0.13);
+    color: var(--app-green);
+}
+
+.status-warning,
+.state-warning {
+    background: rgba(245, 158, 11, 0.16);
+    color: #9a6100;
+}
+
+.status-danger {
+    background: rgba(227, 6, 19, 0.1);
+    color: var(--app-red);
+}
+
+.status-neutral,
+.state-muted {
+    background: #edf2f7;
+    color: #475569;
+}
+
+.state-info {
+    background: rgba(37, 99, 235, 0.11);
+    color: var(--app-blue);
+}
+
+.state-pending {
+    background: rgba(245, 158, 11, 0.16);
+    color: #b45309;
+}
+
+/* ---------- Tendencias (KPI) ---------- */
+.kpi-trend {
+    display: inline-flex;
+    align-items: center;
+    width: max-content;
+    max-width: 100%;
+    padding: 2px 6px;
+    border-radius: 999px;
+    font-size: 0.64rem;
+    font-weight: 800;
+}
+
+.kpi-trend i {
+    margin-right: 3px;
+}
+
+.trend-up {
+    background: rgba(22, 163, 74, 0.12);
+    color: var(--app-green);
+}
+
+.trend-alert {
+    background: rgba(245, 158, 11, 0.15);
+    color: #9a6100;
+}
+
+.trend-down {
+    background: rgba(227, 6, 19, 0.1);
+    color: var(--app-red);
+}
+
+.trend-neutral {
+    background: #edf2f7;
+    color: #475569;
+}
+
+/* ---------- Avatar de perfil ---------- */
+.profile-avatar {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #dbeafe, #ffffff);
+    color: var(--app-sidebar);
+    font-weight: 800;
+}
+
+/* ---------- Topbar compartido ---------- */
+.topbar-title {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 0;
+}
+
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 9px;
+    min-width: 0;
+}
+
+.sidebar-toggle {
+    display: inline-grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 33px;
+    height: 33px;
+    border: 1px solid var(--app-line);
+    border-radius: 8px;
+    background: var(--app-panel);
+    color: var(--app-sidebar);
+    box-shadow: var(--app-shadow-soft);
+    font-size: 1.05rem;
+}
+
+.sidebar-toggle:hover {
+    color: var(--app-blue);
+}
+
+/* ---------- Tarjeta de tiempo / reloj ---------- */
+.time-card,
+.profile-card,
+.topbar-logout {
+    min-height: 35px;
+    border: 1px solid var(--app-line);
+    border-radius: 8px;
+    background: var(--app-panel);
+    box-shadow: var(--app-shadow-soft);
+}
+
+.time-card,
+.profile-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+}
+
+.time-card > i {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    color: var(--app-sidebar);
+    border: 2px solid #dbeafe;
+    font-size: 1.15rem;
+}
+
+.time-card span,
+.profile-card span {
+    display: block;
+}
+
+.time-card small,
+.profile-card small {
+    display: block;
+    color: var(--app-muted);
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.time-card strong {
+    display: block;
+    color: #07143b;
+    font-size: 1.45rem;
+    line-height: 1;
+}
+
+.time-card em {
+    display: block;
+    color: var(--app-muted);
+    font-size: 0.7rem;
+    font-style: normal;
+}
+
+.profile-card strong,
+.profile-card small {
+    white-space: nowrap;
+}
+
+.profile-card strong {
+    color: #07143b;
+    font-size: 0.9rem;
+}
+
+.topbar-logout {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 0 11px;
+    color: var(--app-sidebar);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+.topbar-logout:hover {
+    color: var(--app-red);
+}
+
+/* ---------- Estilos vacíos ---------- */
+.empty-state,
+.empty-card,
+.empty-text {
+    display: grid;
+    place-items: center;
+    min-height: 120px;
+    margin: 0;
+    color: var(--app-muted);
+    text-align: center;
+}
+
+.empty-card {
+    gap: 8px;
+    border: 1px dashed #cbd5e1;
+    border-radius: 8px;
+    background: #f8fbff;
+}
+
+.empty-card i {
+    color: var(--app-blue);
+    font-size: 1.8rem;
+}
+
+/* ---------- Banners de feedback ---------- */
+.feedback-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 42px;
+    margin-bottom: 14px;
+    padding: 10px 13px;
+    border-radius: 8px;
+    font-weight: 800;
+}
+
+.feedback-ok {
+    border: 1px solid rgba(22, 163, 74, 0.22);
+    background: rgba(22, 163, 74, 0.1);
+    color: var(--app-green);
+}
+
+.feedback-error {
+    border: 1px solid rgba(227, 6, 19, 0.22);
+    background: rgba(227, 6, 19, 0.08);
+    color: var(--app-red);
+}
+
+/* ---------- Enlaces de navegación ---------- */
+.side-link-card {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr) 18px;
+    gap: 12px;
+    align-items: center;
+    min-height: 78px;
+    padding: 14px;
+    border: 1px solid var(--app-line);
+    border-radius: 8px;
+    background: var(--app-panel);
+    box-shadow: var(--app-shadow);
+    color: var(--app-ink);
+    text-decoration: none;
+}
+
+.side-link-card > i:first-child {
+    color: var(--app-blue);
+    font-size: 1.72rem;
+}
+
+.side-link-card strong,
+.side-link-card small {
+    display: block;
+}
+
+.side-link-card strong {
+    color: #07143b;
+}
+
+.side-link-card small {
+    color: var(--app-muted);
+}
+
+.side-link-card > i:last-child {
+    color: var(--app-blue);
+}
+
+/* ---------- Tarjetas KPI ---------- */
+.kpi-list {
+    display: grid;
+    gap: 10px;
+}
+
+.kpi-list div {
+    display: grid;
+    grid-template-columns: 30px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 8px 10px;
+    border: 1px solid var(--app-line);
+    border-radius: 8px;
+}
+
+.kpi-list i {
+    color: var(--app-blue);
+    font-size: 1.1rem;
+}
+
+.kpi-list span {
+    color: var(--app-muted);
+    font-weight: 700;
+}
+
+.kpi-list strong {
+    color: var(--app-blue);
+}
+
+/* ---------- Avisos / Noticias ---------- */
+.notice-list {
+    display: grid;
+    gap: 10px;
+}
+
+.notice-item {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 10px;
+    align-items: center;
+    min-height: 66px;
+    padding: 11px;
+    border: 1px solid var(--app-line);
+    border-radius: 8px;
+}
+
+.notice-item > i {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    font-size: 1.08rem;
+}
+
+.notice-item strong,
+.notice-item small {
+    display: block;
+}
+
+.notice-item strong {
+    color: #07143b;
+    font-size: 0.86rem;
+}
+
+.notice-item small {
+    color: var(--app-muted);
+    font-size: 0.76rem;
+    line-height: 1.32;
+}
+
+.notice-ok {
+    background: rgba(22, 163, 74, 0.08);
+}
+
+.notice-ok > i {
+    color: var(--app-green);
+    background: rgba(22, 163, 74, 0.13);
+}
+
+.notice-warning {
+    background: rgba(245, 158, 11, 0.1);
+}
+
+.notice-warning > i {
+    color: var(--app-yellow);
+    background: rgba(245, 158, 11, 0.16);
+}
+
+.notice-info {
+    background: rgba(37, 99, 235, 0.08);
+}
+
+.notice-info > i {
+    color: var(--app-blue);
+    background: rgba(37, 99, 235, 0.12);
+}
+
+/* ---------- Tarjeta de días / progreso ---------- */
+.days-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 78px;
+    padding: 14px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #f8fbff, #eef5ff);
+}
+
+.days-card i {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    color: var(--app-blue);
+    background: #ffffff;
+    font-size: 1.42rem;
+}
+
+.days-card strong {
+    display: block;
+    color: #07143b;
+    font-size: 1.05rem;
+}
+
+.days-card small {
+    display: block;
+    color: var(--app-muted);
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.progress-ring {
+    --progress: 0;
+    display: grid;
+    place-items: center;
+    width: 112px;
+    height: 112px;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at center, #ffffff 56%, transparent 58%),
+        conic-gradient(var(--app-blue) calc(var(--progress) * 1%), #e7eef8 0);
+}
+
+.progress-ring span {
+    color: #07143b;
+    font-size: 1.55rem;
+    font-weight: 800;
+}
+
+.progress-summary {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 16px;
+}
+
+.progress-summary strong,
+.progress-summary span,
+.progress-summary small {
+    display: block;
+}
+
+.progress-summary strong {
+    color: #07143b;
+    font-size: 1.32rem;
+}
+
+.progress-summary span {
+    color: var(--app-muted);
+}
+
+.progress-summary small {
+    color: var(--app-muted);
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+/* ---------- Paso a paso ---------- */
+.step-line {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.step-item {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 7px;
+    color: var(--app-muted);
+    text-align: center;
+}
+
+.step-item::before {
+    content: "";
+    position: absolute;
+    top: 17px;
+    left: calc(-50% + 22px);
+    width: calc(100% - 44px);
+    border-top: 2px dashed #cbd5e1;
+}
+
+.step-item:first-child::before {
+    display: none;
+}
+
+.step-item span {
+    display: grid;
+    place-items: center;
+    position: relative;
+    z-index: 1;
+    width: 36px;
+    height: 36px;
+    border: 1px solid #cbd5e1;
+    border-radius: 50%;
+    background: #ffffff;
+    font-weight: 800;
+}
+
+.step-item strong {
+    color: #172554;
+    font-size: 0.82rem;
+}
+
+.step-item.current span,
+.step-item.done span {
+    border-color: var(--app-blue);
+    background: var(--app-blue);
+    color: #ffffff;
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.24);
+}
+
+.step-item.done span {
+    background: var(--app-green);
+    border-color: var(--app-green);
+}
+
+/* ---------- Acciones de marcado ---------- */
+.mark-actions {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.mark-action {
+    display: grid;
+    place-items: center;
+    gap: 8px;
+    min-height: 116px;
+    padding: 14px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #172554;
+    text-align: center;
+    transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.mark-action i {
+    color: var(--app-blue);
+    font-size: 1.62rem;
+}
+
+.mark-action strong,
+.mark-action small {
+    display: block;
+}
+
+.mark-action strong {
+    font-size: 0.92rem;
+    font-weight: 800;
+}
+
+.mark-action small {
+    color: var(--app-muted);
+    font-size: 0.72rem;
+}
+
+.mark-action.active {
+    border-color: var(--app-blue);
+    background: linear-gradient(135deg, var(--app-blue), #0a49ca);
+    color: #ffffff;
+    box-shadow: 0 14px 28px rgba(37, 99, 235, 0.25);
+}
+
+.mark-action.active i,
+.mark-action.active small {
+    color: #ffffff;
+}
+
+.mark-action.complete {
+    border-color: rgba(22, 163, 74, 0.24);
+    background: rgba(22, 163, 74, 0.08);
+}
+
+.mark-action:not(:disabled):hover {
+    transform: translateY(-1px);
+}
+
+.mark-action:disabled {
+    cursor: not-allowed;
+    opacity: 0.72;
+}
+
+/* ---------- Control de observación ---------- */
+.observation-control {
+    display: grid;
+    gap: 6px;
+    margin-top: 14px;
+}
+
+.observation-control span {
+    color: var(--app-muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.observation-control input {
+    width: 100%;
+    min-height: 42px;
+    padding: 0 12px;
+    border: 1px solid var(--app-line);
+    border-radius: 8px;
+    outline: 0;
+}
+
+/* ---------- Estado actual ---------- */
+.status-row {
+    display: grid;
+    grid-template-columns: minmax(230px, 0.6fr) minmax(0, 1fr);
+    gap: 12px;
+}
+
+.current-state {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 68px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--app-line);
+    box-shadow: var(--app-shadow-soft);
+}
+
+.current-state > i {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.78);
+    font-size: 1.28rem;
+}
+
+.current-state small,
+.current-state strong {
+    display: block;
+}
+
+.current-state small {
+    font-size: 0.74rem;
+    font-weight: 800;
+}
+
+.current-state strong {
+    font-size: 1.06rem;
+}
+
+.schedule-strip {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    min-height: 68px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--app-line);
+    box-shadow: var(--app-shadow-soft);
+    background: #f8fbff;
+    color: #172554;
+}
+
+.schedule-strip > i {
+    color: var(--app-blue);
+    font-size: 1.42rem;
+}
+
+.schedule-strip span {
+    color: #334155;
+}
+
+.schedule-strip strong {
+    color: #172554;
+}
+
+/* ---------- Tablas ---------- */
+.rrhh-table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* ---------- Listas de alertas ---------- */
+.alert-list {
+    display: grid;
+    gap: 8px;
+}
+
+.alert-item {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr) 14px;
+    gap: 8px;
+    align-items: center;
+    min-height: 51px;
+    padding: 8px 9px;
+    border: 1px solid var(--app-line);
+    border-radius: 8px;
+    color: var(--app-ink);
+    text-decoration: none;
+    transition: border-color 160ms ease, transform 160ms ease, background-color 160ms ease;
+}
+
+.alert-item:hover {
+    border-color: #b8c8dc;
+    background: #f8fbff;
+    transform: translateY(-1px);
+}
+
+.alert-item > span:first-child {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: var(--app-blue-soft);
+    color: var(--app-blue);
+    font-size: 0.92rem;
+}
+
+.alert-item.warning > span:first-child {
+    background: rgba(245, 158, 11, 0.16);
+    color: var(--app-yellow);
+}
+
+.alert-item.attention > span:first-child {
+    background: rgba(37, 99, 235, 0.12);
+    color: var(--app-blue);
+}
+
+.alert-item.ok > span:first-child {
+    background: rgba(22, 163, 74, 0.13);
+    color: var(--app-green);
+}
+
+.alert-item strong,
+.alert-item small {
+    display: block;
+}
+
+.alert-item strong {
+    color: #0f172a;
+    font-size: 0.76rem;
+}
+
+.alert-item small {
+    color: var(--app-muted);
+    font-size: 0.68rem;
+    line-height: 1.32;
+}
+
+.alert-item > i {
+    color: var(--app-muted);
+}
+
+/* ---------- Capabilities strip ---------- */
+.capabilities-strip {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border: 1px solid var(--app-line);
+    border-radius: 8px;
+    background: var(--app-panel);
+    box-shadow: var(--app-shadow);
+    overflow: hidden;
+}
+
+.capabilities-strip article {
+    display: grid;
+    grid-template-columns: 35px minmax(0, 1fr);
+    gap: 9px;
+    align-items: center;
+    padding: 13px 14px;
+    border-right: 1px solid var(--app-line);
+}
+
+.capabilities-strip article:last-child {
+    border-right: 0;
+}
+
+.capabilities-strip i {
+    color: var(--app-blue);
+    font-size: 1.42rem;
+}
+
+.capabilities-strip strong,
+.capabilities-strip span {
+    display: block;
+}
+
+/* ---------- Panel base ---------- */
+.dashboard-panel {
+    min-width: 0;
+    padding: 14px;
+    border: 1px solid var(--app-line);
+    border-radius: 8px;
+    background: var(--app-panel);
+    box-shadow: var(--app-shadow);
+}
+
+/* ---------- Estilos de tabla (base compartida) ---------- */
+.table-uppercased th {
+    border-bottom: 1px solid var(--app-line);
+    color: #334155;
+    font-size: 0.64rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.table-uppercased td {
+    border-color: #edf2f7;
+    color: #334155;
+    font-size: 0.74rem;
+}
+
+/* ---------- Celda de estudiante ---------- */
+.student-cell {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.student-cell span {
+    display: grid;
+    place-items: center;
+    width: 23px;
+    height: 23px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #dbeafe, #ffffff);
+    color: var(--app-sidebar);
+    font-weight: 800;
+    font-size: 0.62rem;
+}
+
+.student-cell strong {
+    color: #0f172a;
+    font-size: 0.74rem;
+}
+
+/* ---------- Formulario base ---------- */
+.form-shell {
+    min-height: 46px;
+}
+
+.form-shell .rrhh-input {
+    min-height: 46px;
+}
+
+/* ---------- Resumen de auditoría ---------- */
+.audit-summary {
+    display: grid;
+    gap: 8px;
+    padding: 14px;
+    border: 1px solid var(--app-line);
+    border-radius: 8px;
+    background: var(--app-panel);
+    box-shadow: var(--app-shadow);
+}
+
+/* ---------- Contenedor de tablas ---------- */
+.table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* ---------- Sidebar overflow ---------- */
+@media (max-width: 991.98px) {
+    #sidebarOffcanvas {
+        overflow-y: auto;
+    }
+
+    .main-header {
+        position: static;
+    }
+}
+
+/* ---------- Responsividad móvil ---------- */
+@media (max-width: 820px) {
+    .profile-card strong,
+    .profile-card small {
+        white-space: normal;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+    }
+
+    .panel-heading {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .panel-heading a,
+    .panel-heading strong {
+        white-space: normal;
+    }
+
+    .status-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .step-line {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .mark-actions {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .capabilities-strip {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .capabilities-strip article {
+        border-right: 0;
+    }
+
+    .capabilities-strip article:nth-child(odd) {
+        border-right: 1px solid var(--app-line);
+    }
+
+    .capabilities-strip article:nth-child(even) {
+        border-right: 0;
+    }
+
+    .capabilities-strip article:nth-last-child(-n+2):nth-child(odd) {
+        border-right: 0;
+    }
+}
+
+/* ---------- Vistas de Acompañamiento ---------- */
+.vista-seccion.vista-oculta {
+    display: none;
+}
+
+.vista-seccion.vista-activa {
+    display: block;
+}
+
+/* ---------- Botón de vistas (inline en header) ---------- */
+.fab-inline {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.fab-main-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 120px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--app-line);
+    background: var(--app-panel);
+    color: var(--app-ink);
+    font-size: 0.74rem;
+    font-weight: 700;
+    box-shadow: var(--app-shadow-soft);
+    padding: 0 10px;
+    cursor: pointer;
+    transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.fab-main-inline:hover {
+    color: var(--app-blue);
+    border-color: #b8c8dc;
+    background: #f8fbff;
+}
+
+.fab-main-inline:focus {
+    outline: 0;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.fab-main-inline i {
+    font-size: 1.05rem;
+}
+
+.fab-main-text {
+    display: inline;
+}
+
+.fab-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 1070;
+    display: none;
+    min-width: 240px;
+    padding: 8px 0;
+    border: 1px solid var(--app-line);
+    border-radius: 10px;
+    background: var(--app-panel);
+    box-shadow: var(--app-shadow);
+}
+
+.fab-dropdown.show {
+    display: block;
+}
+
+.fab-dropdown .rrhh-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    color: var(--app-ink);
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 160ms ease, color 160ms ease;
+}
+
+.fab-dropdown .rrhh-menu-item:hover {
+    background: var(--app-blue-soft);
+    color: var(--app-blue);
+}
+
+.fab-dropdown .rrhh-menu-item.active,
+.fab-dropdown .rrhh-menu-item:focus {
+    background: linear-gradient(135deg, var(--app-blue), #0a49ca);
+    color: #ffffff;
+}
+
+.fab-dropdown .rrhh-menu-item.active i,
+.fab-dropdown .rrhh-menu-item:focus i {
+    color: #ffffff;
+}
+
+.fab-dropdown i {
+    width: 18px;
+    font-size: 1.05rem;
+    text-align: center;
+}
+
+
+/* Campos de hora 24 h: dígitos de ancho fijo y borde de error solo después de que el usuario interactúa
+ * (por ejemplo 09:00 en un campo que exige 10:00–20:00). */
+input[data-hora24] { font-variant-numeric: tabular-nums; }
+input[data-hora24]:user-invalid { border-color: var(--app-red) !important; box-shadow: 0 0 0 2px rgba(227, 6, 19, 0.16) !important; }
